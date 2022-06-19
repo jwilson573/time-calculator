@@ -1,12 +1,11 @@
 import { StyleSheet } from 'react-native'
-import {Button, Text, View} from '../components/Themed'
+import {Button, Text, View} from '../components/shared-components'
 import React, {useContext} from "react"
 import {TouchableOpacity} from "react-native"
 import {observer} from "mobx-react"
 import {StoreContext} from "../app-stores"
-import {NavigationProp} from "@react-navigation/native";
-import {NativeStackScreenProps} from "@react-navigation/native-stack/src/types";
-import {PreviousEntry} from "../app-stores/time-zone-store";
+import {NativeStackScreenProps} from "@react-navigation/native-stack/src/types"
+import {PreviousEntry} from "../constants/types/index"
 
 type PreviousEntriesProps = {
 
@@ -24,7 +23,9 @@ export const PreviousEntries: React.FC<NativeStackScreenProps<PreviousEntriesPro
     return (
     <View style={styles.container}>
       <Text style={styles.title}>Previous 10 Searches</Text>
-      <Text style={{marginBottom: 10, width: "75%", textAlign: "center"}}>Press one of your previous results to recheck the time!</Text>
+      <Text style={{marginBottom: 10, width: "75%", textAlign: "center"}}>
+        Press one of your previous results to recheck the time!
+      </Text>
       <View style={{flex: 1, width: "100%"}}>
         {
           previousEntries?.length > 0 && previousEntries.map((entry, index) => {
@@ -40,8 +41,6 @@ export const PreviousEntries: React.FC<NativeStackScreenProps<PreviousEntriesPro
         }
         <View style={{flexDirection: "row", marginTop: 20}}>
           <Button
-            background={{lightColor:"#4185cb", darkColor: "#172e48"}}
-            border={{lightColor: "#f5f5f5", darkColor: "#a0bbd9"}}
             textColor={{color: "#fff"}}
             onPress={() => timeZoneStore.clearPreviousEntries()}
             buttonText={"Clear"}

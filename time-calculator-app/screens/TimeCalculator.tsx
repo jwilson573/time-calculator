@@ -1,16 +1,18 @@
-import React, {useContext, useEffect, useLayoutEffect, useState} from "react"
-import {StyleSheet, TouchableOpacity} from 'react-native'
+import React, {useContext, useState} from "react"
+import {StyleSheet, ActivityIndicator} from 'react-native'
 import {observer} from "mobx-react"
-import {Text, View, Button, UserInput} from '../components/Themed';
-import { RootTabScreenProps } from '../../types';
-import {StoreContext} from "../app-stores/";
-import {CoordInfo, PreviousEntry} from "../app-stores/time-zone-store";
-import {ConvertedTimezoneApiResponse} from "../app-apis/api-converters/time-zone-converter";
+import {Text, View, Button, UserInput} from '../components/shared-components'
+import {StoreContext} from "../app-stores/"
+import {validations} from "../app-utils/validations"
+import {useTheme} from "@react-navigation/native"
+import {ConvertedTimezoneApiResponse, CoordInfo, CustomTheme} from "../constants/types/index"
 
-type MainContentProps = ConvertedTimezoneApiResponse & CoordInfo
+type MainContentProps = ConvertedTimezoneApiResponse & CoordInfo & {isLoading: boolean}
 const MainContent: React.FC<MainContentProps> = (props: MainContentProps) => {
-  const {city, country, time, lat, lng, state} = props
-  console.log(props, "props")
+  const {city, country, time, lat, lng, state, isLoading} = props
+  if (isLoading) {
+    return <ActivityIndicator size={"large"}/>
+  }
   if (time && city && country && lat && lng) {
     return (
       <View>
@@ -27,25 +29,32 @@ const MainContent: React.FC<MainContentProps> = (props: MainContentProps) => {
   return null
 }
 
-export const TimeCalculator: React.FC = observer((props: any) => {
+export const TimeCalculator: React.FC = observer((_) => {
   const {timeZoneStore} = useContext(StoreContext)
-  const [latitude, setLatitude] = useState(timeZoneStore.userCoordinates.lat)
-  const [longitude, setLongitude] = useState(timeZoneStore.userCoordinates.lng)
+  const {colors} = useTheme() as CustomTheme
+  const [latitude, setLatitude] = useState<string>(timeZoneStore.userCoordinates.lat)
+  const [longitude, setLongitude] = useState<string>(timeZoneStore.userCoordinates.lng)
+  const [isValid, setIsValid] = useState<boolean | null>(null)
   const {city, country, time, timeZone, state} = timeZoneStore.tzData
   const coordinates = timeZoneStore.userCoordinates
-
   const handleSubmit = (data: CoordInfo) => {
-    timeZoneStore.userCoordinates = data
-    timeZoneStore.getTimeUTCFromApi()
-    setLongitude("")
-    setLatitude("")
+    if (validations.validateCoordinates(data)) {
+      timeZoneStore.userCoordinates = data
+      timeZoneStore.getTimeUTCFromApi()
+      setLongitude("")
+      setLatitude("")
+    } else {
+      setIsValid(false)
+    }
   }
   const clearResults = () => {
     timeZoneStore.clearResults()
+    setIsValid(true)
   }
   return (
     <View style={[styles.container]}>
       <MainContent
+        isLoading={timeZoneStore.isAppLoading}
         city={city}
         time={time}
         state={state}
@@ -58,13 +67,13 @@ export const TimeCalculator: React.FC = observer((props: any) => {
         <View style={{flexDirection: "row", backgroundColor: "transparent"}}>
           <UserInput
             onChangeText={(lat: string) => setLatitude(lat)}
-            background={{lightColor: "#fff", darkColor: "#777"}}
+            style={[!isValid ? {borderColor: colors?.errorBorder }: undefined, {marginRight: 5}]}
             value={latitude}
             placeholder={"Enter Latitude"}
           />
           <UserInput
             onChangeText={(long: string) => setLongitude(long)}
-            background={{lightColor: "#fff", darkColor: "#777"}}
+            style={!isValid ? {borderColor: colors?.errorBorder }: undefined}
             value={longitude}
             placeholder={"Enter Longitude"}
           />
@@ -72,8 +81,7 @@ export const TimeCalculator: React.FC = observer((props: any) => {
       </View>
       <View style={{flexDirection: "row"}}>
       <Button
-        background={{lightColor:"#4185cb", darkColor: "#172e48"}}
-        border={{lightColor: "#f5f5f5", darkColor: "#a0bbd9"}}
+        style={{marginVertical: 10}}
         textColor={{color: "#fff"}}
         onPress={() => handleSubmit({lat: latitude, lng: longitude})}
         buttonText={"Submit"}
@@ -81,8 +89,7 @@ export const TimeCalculator: React.FC = observer((props: any) => {
       </View>
       <View style={{flexDirection: "row"}}>
         <Button
-          background={{lightColor:"#4185cb", darkColor: "#172e48"}}
-          border={{lightColor: "#f5f5f5", darkColor: "#a0bbd9"}}
+          style={{marginRight: 5}}
           textColor={{color: "#fff"}}
           onPress={() => clearResults()}
           buttonText={"Reset"}
@@ -97,7 +104,7 @@ export const TimeCalculator: React.FC = observer((props: any) => {
         />
       </View>
     </View>
-  );
+  )
 })
 
 const styles = StyleSheet.create({
@@ -106,6 +113,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 5
+  },
+  error: {
+    borderColor: "red",
+    color: "red"
   },
   title: {
     fontSize: 20,
@@ -117,4 +128,4 @@ const styles = StyleSheet.create({
     height: 1,
     width: '80%',
   },
-});
+})

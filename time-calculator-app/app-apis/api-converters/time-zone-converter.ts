@@ -1,15 +1,7 @@
-const { DateTime } = require("luxon")
-export type ConvertedTimezoneApiResponse = {
-  city: string
-  time: string
-  country: string
-  timeZone: string
-  state: string
-}
+import {ConvertedTimezoneApiResponse, TimezoneApiConverter} from "../../constants/types/index"
 
-export interface TimezoneApiConverter {
-  convertTimeAPIResponse(data: any): ConvertedTimezoneApiResponse
-}
+const { DateTime } = require("luxon")
+
 class TimeZoneConverter implements TimezoneApiConverter{
 
   // Takes the epoch time from the api response and uses the Luxon library to convert to local time.

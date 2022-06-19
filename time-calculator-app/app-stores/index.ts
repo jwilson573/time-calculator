@@ -7,6 +7,7 @@ const hydrate = create({
     jsonify: true
 })
 export class RootStore {
+  // Any stores added to the rootStore can be accessed anywhere in the app via StoreContext
     timeZoneStore: TimeZoneStore = new TimeZoneStore(this)
     constructor() {
         this.hydrateAndInitializeApp()
@@ -27,7 +28,6 @@ export class RootStore {
 const rootStore: RootStore = new RootStore()
 const StoreContext = createContext(rootStore)
 export {
-    TimeZoneStore,
     rootStore,
     StoreContext
 }

@@ -1,0 +1,1 @@
+export const GET_TIME_ZONE = "/get-time-zone"
