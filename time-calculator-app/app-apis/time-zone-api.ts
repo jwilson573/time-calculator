@@ -1,7 +1,7 @@
 import {CoordInfo} from "../constants/types"
 import axios from "axios"
 import {TimeZoneApiInterface} from "../constants/types/"
-import {GET_TIME_ZONE} from "../constants/time-zone/Api";
+import {GET_TIME_ZONE} from "../constants/time-zone/api-constants";
 
 
 class TimeZoneApi implements TimeZoneApiInterface {

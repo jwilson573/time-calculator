@@ -12,9 +12,9 @@ import {ColorSchemeName, Pressable} from 'react-native';
 
 import Colors from '../constants/types/Colors';
 import useColorScheme from '../hooks/useColorScheme';
-import {PreviousEntries} from '../screens/PreviousEntries';
+import {PreviousEntries} from '../screens/PreviousEntries/PreviousEntries';
 import NotFoundScreen from '../screens/NotFoundScreen';
-import {TimeCalculator} from '../screens/TimeCalculator';
+import {TimeCalculator} from '../screens/TimeCalculator/TimeCalculator';
 import {RootStackParamList, RootTabParamList, RootTabScreenProps} from '../../types';
 import LinkingConfiguration from './LinkingConfiguration';
 import {CustomTheme} from "../constants/types/Themes"
@@ -27,7 +27,7 @@ const CustomDefaultTheme: CustomTheme = {
     border: "#ACACAC",
     text: "#232323",
     ctaButton: "#167aef",
-    errorBorder: "#a21212",
+    error: "#a21212",
     card: "#EEE"
   }
 }
@@ -40,7 +40,7 @@ const CustomDarkTheme: CustomTheme = {
     border: "#cecece",
     text: "#f1f1f1",
     ctaButton: "#0c3b73",
-    errorBorder: "#a21212",
+    error: "#a21212",
     card: "#494949"
   }
 }

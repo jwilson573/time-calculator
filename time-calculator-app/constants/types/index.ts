@@ -1,4 +1,4 @@
-import {TextProps, ViewProps, CustomButtonProps, CustomUserInputProps} from "./Components"
+import {TextProps, ViewProps, CustomButtonProps, CustomUserInputProps, MainContentProps} from "./Components"
 import ExpoColors from "./Colors"
 import {CustomTheme} from "./Themes"
 import {ConvertedTimezoneApiResponse, TimezoneApiConverter, TimeZoneApiInterface} from "./api"
@@ -11,6 +11,7 @@ export type {
   CustomTheme,
   CustomUserInputProps,
   ExpoColors,
+  MainContentProps,
   PreviousEntry,
   TextProps,
   TimezoneApiConverter,

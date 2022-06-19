@@ -9,7 +9,7 @@ export interface CustomTheme extends Theme {
     text: string;
     border: string;
     notification: string;
-    errorBorder: string
+    error: string
     ctaButton: string
   };
 };

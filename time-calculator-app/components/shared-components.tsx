@@ -5,46 +5,29 @@
 
 import {
   Text as DefaultText,
-  TouchableOpacityProps,
   View as DefaultView,
   TouchableOpacity as DefaultTouchableOpacity,
   StyleSheet,
-  Dimensions, TextStyle, TextInput, KeyboardTypeOptions, TextInputProps
-} from 'react-native';
+  Dimensions,
+  TextInput
+} from 'react-native'
 
-import Colors from '../constants/types/Colors';
-import useColorScheme from '../hooks/useColorScheme';
-import React from "react";
-import {useTheme} from "@react-navigation/native";
-import {CustomTheme} from "../constants/types/Themes";
-import {CustomButtonProps, CustomUserInputProps, TextProps, ViewProps} from "../constants/types/Components";
+import React from "react"
+import {useTheme} from "@react-navigation/native"
+import {CustomTheme} from "../constants/types/"
+import {CustomButtonProps, CustomUserInputProps, TextProps, ViewProps} from "../constants/types/"
 const screen = Dimensions.get("window")
-
-export function useThemeColor(
-  props: { light?: string; dark?: string },
-  colorName: keyof typeof Colors.light & keyof typeof Colors.dark
-) {
-  const theme = useColorScheme();
-  const colorFromProps = props[theme];
-
-  if (colorFromProps) {
-    return colorFromProps;
-  } else {
-    return Colors[theme][colorName];
-  }
-}
-
 
 export function Text(props: TextProps) {
   const { style, background, ...otherProps } = props;
   const {colors} = useTheme()
-  return <DefaultText style={[{ color: colors?.text }, style]} {...otherProps} />;
+  return <DefaultText style={[{ color: colors?.text }, style]} {...otherProps} />
 }
 
 export function View(props: ViewProps) {
-  const { style, background, ...otherProps } = props;
+  const { style, background, ...otherProps } = props
   const {colors} = useTheme() as CustomTheme
-  return <DefaultView style={[{ backgroundColor: colors?.background }, style]} {...otherProps} />;
+  return <DefaultView style={[{ backgroundColor: colors?.background }, style]} {...otherProps} />
 }
 
 export function Button(props: CustomButtonProps) {
@@ -58,7 +41,7 @@ export function Button(props: CustomButtonProps) {
     >
       <Text style={[styles.buttonText, textColor, buttonTextStyle]}>{buttonText}</Text>
     </DefaultTouchableOpacity>
-  );
+  )
 }
 
 export function UserInput(props: CustomUserInputProps) {
