@@ -1,4 +1,6 @@
+import {Dimensions} from "react-native"
 
+const screen = Dimensions.get("window")
 
 export default {
   alignItemsCenter: {
@@ -6,6 +8,9 @@ export default {
   },
   alignSelfCenter: {
     alignSelf: "center"
+  },
+  borderRadius10: {
+    borderRadius: 10
   },
   centerText: {
     textAlign:  "center"
@@ -27,6 +32,9 @@ export default {
   },
   font20: {
     fontSize: 20
+  },
+  font22: {
+    fontSize: 22
   },
   font40: {
     fontSize: 40
@@ -58,11 +66,20 @@ export default {
   marginVertical10: {
     marginVertical: 10
   },
+  overflowHidden: {
+    overflow: "hidden"
+  },
   padding5: {
     padding: 5
   },
   paddingVertical5: {
     paddingVertical: 5
+  },
+  screenHeight: {
+    height: screen.height
+  },
+  screenWidth: {
+    width: screen.width
   },
   transparentBG: {
     backgroundColor: "transparent"

@@ -22,7 +22,7 @@ const MainContent: React.FC<MainContentProps> = (props: MainContentProps) => {
         <Text style={tcStyles.title}>{city}, {state}</Text>
         <Text style={tcStyles.alignSelfCenter}>{country}</Text>
         <Text style={[tcStyles.font40, tcStyles.fontBold, tcStyles.alignSelfCenter]}>{time}</Text>
-        <View style={tcStyles.flexRow}>
+        <View style={[tcStyles.flexRow, tcStyles.justifyCenter]}>
           <Text style={tcStyles.marginRight10}>Latitude: {lat}</Text>
           <Text>Longitude: {lng}</Text>
         </View>
@@ -35,16 +35,11 @@ const MainContent: React.FC<MainContentProps> = (props: MainContentProps) => {
 export const TimeCalculator: React.FC = observer((_) => {
   const {timeZoneStore} = useContext(StoreContext)
   const {colors} = useTheme() as CustomTheme
-  const [latitude, setLatitude] = useState<string>(timeZoneStore.userCoordinates.lat)
-  const [longitude, setLongitude] = useState<string>(timeZoneStore.userCoordinates.lng)
+  const [latitude, setLatitude] = useState<string>("")
+  const [longitude, setLongitude] = useState<string>("")
   const [isValid, setIsValid] = useState<boolean | null>(true)
   const {city, country, time, timeZone, state} = timeZoneStore.tzData
   const coordinates = timeZoneStore.userCoordinates
-
-  useEffect(() => {
-    setLatitude(timeZoneStore.userCoordinates.lat)
-    setLongitude(timeZoneStore.userCoordinates.lng)
-  }, [timeZoneStore.userCoordinates])
 
   const handleSubmit = (data: CoordInfo) => {
     if (validations.validateCoordinates(data)) {
@@ -58,6 +53,8 @@ export const TimeCalculator: React.FC = observer((_) => {
   }
   const clearResults = () => {
     timeZoneStore.clearResults()
+    setLongitude("")
+    setLatitude("")
     setIsValid(true)
   }
   return (
@@ -78,12 +75,14 @@ export const TimeCalculator: React.FC = observer((_) => {
             onChangeText={(lat: string) => setLatitude(lat)}
             style={[!isValid ? {borderColor: colors?.error }: undefined, tcStyles.marginRight5]}
             value={latitude}
+            keyboardType={"numbers-and-punctuation"}
             placeholder={"Enter Latitude"}
           />
           <UserInput
             onChangeText={(long: string) => setLongitude(long)}
             style={!isValid ? {borderColor: colors?.error }: undefined}
             value={longitude}
+            keyboardType={"numbers-and-punctuation"}
             placeholder={"Enter Longitude"}
           />
         </View>
@@ -109,10 +108,18 @@ export const TimeCalculator: React.FC = observer((_) => {
           onPress={() => clearResults()}
           buttonText={"Reset"}
         />
-        {/* If running in simulator, please make sure you aren't using a custom location in Features > Location */}
+        {/* If running in simulator, please verify your custom location in Features > Location. If set to "None",
+         it will take some time for the location to be returned. However, it will still update.*/}
         <Button
           textColor={tcStyles.whiteFC}
-          onPress={() => timeZoneStore.fetchUserLocation()}
+          onPress={() => {
+            timeZoneStore.fetchUserLocation().then(_ => {
+              setIsValid(true)
+            }).catch(err => {
+              console.log("Error fetching user coordinates", err)
+              setIsValid(false)
+            })
+          }}
           buttonText={"Get Local Time"}
         />
       </View>

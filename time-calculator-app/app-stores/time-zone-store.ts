@@ -88,20 +88,25 @@ export class TimeZoneStore implements TimeZoneStoreInterface{
     let { granted } = await Location.requestForegroundPermissionsAsync()
     if (granted) {
       this.isAppLoading = true
-      const location: LocationObject = await Location.getCurrentPositionAsync(
+      try {
+        const location: LocationObject = await Location.getCurrentPositionAsync(
           {
             accuracy: Location.Accuracy.High,
             distanceInterval: 10,
           },
         )
-      this.userCoordinates = {
-        lat: location?.coords?.latitude?.toString(),
-        lng: location?.coords?.longitude?.toString()
+        this.userCoordinates = {
+          lat: location?.coords?.latitude?.toString(),
+          lng: location?.coords?.longitude?.toString()
+        }
+        if (this.userCoordinates.lat?.length && this.userCoordinates.lng?.length) {
+          this.getTimeUTCFromApi(this.userCoordinates)
+        }
+        this.isAppLoading = false
+      } catch(e) {
+        this.isAppLoading = false
       }
-      if (this.userCoordinates.lat?.length && this.userCoordinates.lng?.length) {
-        this.getTimeUTCFromApi(this.userCoordinates)
-      }
-      this.isAppLoading = false
+
     }
 
   }
