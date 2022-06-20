@@ -5,8 +5,8 @@ import {tzConverter} from "../app-apis/api-converters/time-zone-converter"
 import * as Location from "expo-location"
 import {RootStore} from "./index"
 import {LocationObject} from "expo-location";
-import {CoordInfo, PreviousEntry, TimeZoneStoreInterface} from "../constants/types/TimezoneStore"
-import {ConvertedTimezoneApiResponse} from "../constants/types/index"
+import {CoordInfo, PreviousEntry, TimeZoneStoreInterface} from "../constants/types/"
+import {ConvertedTimezoneApiResponse} from "../constants/types/"
 
 
 export class TimeZoneStore implements TimeZoneStoreInterface{

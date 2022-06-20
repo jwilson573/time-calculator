@@ -10,14 +10,12 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import * as React from 'react';
 import {ColorSchemeName, Pressable} from 'react-native';
 
-import Colors from '../constants/types/Colors';
-import useColorScheme from '../hooks/useColorScheme';
 import {PreviousEntries} from '../screens/PreviousEntries/PreviousEntries';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import {TimeCalculator} from '../screens/TimeCalculator/TimeCalculator';
 import {RootStackParamList, RootTabParamList, RootTabScreenProps} from '../../types';
 import LinkingConfiguration from './LinkingConfiguration';
-import {CustomTheme} from "../constants/types/Themes"
+import {CustomTheme} from "../constants/types/"
 
 const CustomDefaultTheme: CustomTheme = {
   ...DefaultTheme,
