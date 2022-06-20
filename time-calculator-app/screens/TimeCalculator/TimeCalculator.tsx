@@ -47,6 +47,7 @@ export const TimeCalculator: React.FC = observer((_) => {
       timeZoneStore.getTimeUTCFromApi()
       setLongitude("")
       setLatitude("")
+      setIsValid(true)
     } else {
       setIsValid(false)
     }
