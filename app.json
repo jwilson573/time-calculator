@@ -8,7 +8,7 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./time-calculator-app/assets/images/tcIcon.png",
+      "image": "./time-calculator-app/assets/images/tcIcon_whte.png",
       "resizeMode": "contain",
       "backgroundColor": "#031E51"
     },
