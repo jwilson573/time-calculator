@@ -1,19 +1,15 @@
 import {makeObservable, get, set, toJS, observable, runInAction} from "mobx"
 import {persist} from "mobx-persist"
 import {timeZoneApi} from "../app-apis/time-zone-api"
-import {ConvertedTimezoneApiResponse, tzConverter} from "../app-apis/api-converters/time-zone-converter"
+import {tzConverter} from "../app-apis/api-converters/time-zone-converter"
 import * as Location from "expo-location"
 import {RootStore} from "./index"
-export type CoordInfo = {
-    lat: string
-    lng: string
-}
-interface ITimeZoneStore {
-    getTimeUTCFromApi(): void
-}
-export type PreviousEntry = ConvertedTimezoneApiResponse & CoordInfo
+import {LocationObject} from "expo-location";
+import {CoordInfo, PreviousEntry, TimeZoneStoreInterface} from "../constants/types/TimezoneStore"
+import {ConvertedTimezoneApiResponse} from "../constants/types/index"
 
-export class TimeZoneStore implements ITimeZoneStore{
+
+export class TimeZoneStore implements TimeZoneStoreInterface{
   @persist("object") _userCoordinates: CoordInfo = {lat: "", lng: ""}
   @persist("object") _timeZoneData: ConvertedTimezoneApiResponse = {
     city: "",
@@ -23,13 +19,15 @@ export class TimeZoneStore implements ITimeZoneStore{
     state: ""
   }
   @persist("list") _previousEntries: PreviousEntry[] = []
-
+  _isAppLoading: boolean = false
   constructor(rootStore: RootStore) {
     makeObservable(this, {
       _timeZoneData: observable,
       _userCoordinates: observable,
-      _previousEntries: observable
-    })
+      _previousEntries: observable,
+      _isAppLoading: false,
+      }
+    )
   }
 
   set userCoordinates({lat, lng}){
@@ -40,7 +38,7 @@ export class TimeZoneStore implements ITimeZoneStore{
     return toJS(this._userCoordinates)
   }
 
-  get previousEntries() {
+  get previousEntries(): PreviousEntry[] {
     return toJS(this._previousEntries)
   }
 
@@ -61,9 +59,18 @@ export class TimeZoneStore implements ITimeZoneStore{
     })
   }
 
+  set isAppLoading(flag: boolean){
+    runInAction(() => this._isAppLoading = flag)
+  }
+  get isAppLoading(): boolean{
+    return toJS(this._isAppLoading)
+  }
+
   public getTimeUTCFromApi = (coordinates = this.userCoordinates) => {
+    this.isAppLoading = true
     timeZoneApi.getTimeUTCFromApi(coordinates)
       .then(resp => {
+        this.isAppLoading = false
         if (resp?.data) {
           const data: ConvertedTimezoneApiResponse = tzConverter.convertTimeAPIResponse(resp.data)
           const previousEntry: PreviousEntry = Object.assign({}, data, this.userCoordinates)
@@ -72,32 +79,36 @@ export class TimeZoneStore implements ITimeZoneStore{
         }
       })
       .catch(error => {
+        this.isAppLoading = false
           console.log(error, "error fetching time from api")
       })
 
   }
-  public fetchUserLocation = () => {
-    Location.requestForegroundPermissionsAsync().then(resp => {
-      if (resp?.granted) {
-        Location.watchPositionAsync(
+  public fetchUserLocation = async() => {
+    let { granted } = await Location.requestForegroundPermissionsAsync()
+    if (granted) {
+      this.isAppLoading = true
+      try {
+        const location: LocationObject = await Location.getCurrentPositionAsync(
           {
             accuracy: Location.Accuracy.High,
             distanceInterval: 10,
           },
-          (location) => {
-            this.userCoordinates = {
-              lat: location?.coords?.latitude?.toString(),
-              lng: location?.coords?.longitude?.toString()
-            }
-          }
-        ).then(_ => {
-          this.getTimeUTCFromApi()
-        })
+        )
+        this.userCoordinates = {
+          lat: location?.coords?.latitude?.toString(),
+          lng: location?.coords?.longitude?.toString()
+        }
+        if (this.userCoordinates.lat?.length && this.userCoordinates.lng?.length) {
+          this.getTimeUTCFromApi(this.userCoordinates)
+        }
+        this.isAppLoading = false
+      } catch(e) {
+        this.isAppLoading = false
       }
-    })
-      .catch(err => {
-        console.log(err, "location permission failed")
-      })
+
+    }
+
   }
 
   public clearResults = () => {

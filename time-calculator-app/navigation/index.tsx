@@ -3,26 +3,53 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
-import { FontAwesome } from '@expo/vector-icons';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {FontAwesome} from '@expo/vector-icons';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {DarkTheme, DefaultTheme, NavigationContainer, Theme, useTheme} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Pressable } from 'react-native';
+import {ColorSchemeName, Pressable} from 'react-native';
 
-import Colors from '../constants/Colors';
+import Colors from '../constants/types/Colors';
 import useColorScheme from '../hooks/useColorScheme';
-import {PreviousEntries} from '../screens/PreviousEntries';
+import {PreviousEntries} from '../screens/PreviousEntries/PreviousEntries';
 import NotFoundScreen from '../screens/NotFoundScreen';
-import { TimeCalculator } from '../screens/TimeCalculator';
-import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../../types';
+import {TimeCalculator} from '../screens/TimeCalculator/TimeCalculator';
+import {RootStackParamList, RootTabParamList, RootTabScreenProps} from '../../types';
 import LinkingConfiguration from './LinkingConfiguration';
+import {CustomTheme} from "../constants/types/Themes"
+
+const CustomDefaultTheme: CustomTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: "#f6f6f6",
+    border: "#ACACAC",
+    text: "#232323",
+    ctaButton: "#167aef",
+    error: "#a21212",
+    card: "#EEE"
+  }
+}
+
+const CustomDarkTheme: CustomTheme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    background: "#1c1c1c",
+    border: "#cecece",
+    text: "#f1f1f1",
+    ctaButton: "#0c3b73",
+    error: "#a21212",
+    card: "#494949"
+  }
+}
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
     <NavigationContainer
       linking={LinkingConfiguration}
-      theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      theme={colorScheme === 'dark' ? CustomDarkTheme : CustomDefaultTheme}>
       <RootNavigator />
     </NavigationContainer>
   );
@@ -53,20 +80,19 @@ function RootNavigator() {
 const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabNavigator() {
-  const colorScheme = useColorScheme();
-
+  const {colors} = useTheme()
   return (
     <BottomTab.Navigator
       initialRouteName="TabOne"
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme].tint,
+        tabBarActiveTintColor: colors?.primary,
       }}>
       <BottomTab.Screen
         name="TabOne"
         component={TimeCalculator}
         options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
           title: 'Time Calculator',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="clock-o" color={color} />,
           headerRight: () => (
             <Pressable
               onPress={() => {
@@ -78,7 +104,7 @@ function BottomTabNavigator() {
               <FontAwesome
                 name="history"
                 size={25}
-                color={Colors[colorScheme].text}
+                color={colors?.text}
                 style={{ marginRight: 15 }}
               />
             </Pressable>
@@ -98,3 +124,4 @@ function TabBarIcon(props: {
 }) {
   return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
 }
+
