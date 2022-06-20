@@ -8,9 +8,9 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./time-calculator-app/assets/images/splash.png",
+      "image": "./time-calculator-app/assets/images/tcIcon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#031E51"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
