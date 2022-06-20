@@ -3,7 +3,6 @@ import commonStyles from "../../../app-styles/common-styles"
 export default {
   ...commonStyles,
   container: {
-    ...commonStyles,
     ...commonStyles.flex100,
     ...commonStyles.alignItemsCenter,
     ...commonStyles.justifyCenter,
